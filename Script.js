@@ -1,11 +1,16 @@
-var cApath = Qva.Remote + "?public=only&type=Document&name=Extensions/centerAlign/";
+var cApath = Qva.Remote + "?public=only&type=Document&name=Extensions/centerAlignPENSKE/";
 Qva.LoadCSS(cApath + "style.css");
-Qva.AddDocumentExtension('centerAlign', function() {
+Qva.AddDocumentExtension('centerAlignPENSKE', function() {
 	var _this = this;
 	//default width is 1024 to act as a minimum width for your content 
-	var elementsUnderGrid;	
-	var elementsUnderGridDet;
+
+	//------------------------------------------------------------------- EPAM
+	var elementsUnderGrid;	 // set of elements under Main grid
+	var elementsUnderGridDet; // set of elements under Detail grid
 	var elementsBeyondGrid;	 // one textbox
+	var grName = "CH31";	// name of the Main grid
+	var grNameDet = "CH60"; // name of the Detail grid
+	//------------------------------------------------------------------- EPAM
 	
 	function centerIt() {
 		if(!($("body").hasClass("centerAlign"))) {
@@ -31,46 +36,11 @@ Qva.AddDocumentExtension('centerAlign', function() {
 		$(".centerAlign .master").css("width", maxRight + "px");
 		$(".qvtr-tabs").css("width", $(".master").width() + "px");
 		
-		$(".QvFrame").filter(".Document_TX_HOVER").css("position", "relative").css("zIndex", "100").hide();
-		console.log("set2");
-
-		/*
-		$(".QvFrame").filter("Document_CH01").hover(function() {
-			//$(".QvFrame").filter(".Document_TX_HOVER").show();
-			console.log("hover");
-		});
-		//console.log('Capture for ' + event.type + ' target is ' + event.target.id);
-		*/
-		selfL=$(".QvFrame").filter(".Document_CH42").css("left");
-		selfW=$(".QvFrame").filter(".Document_CH42").css("width");
+		//------------------------------------------------------------------- EPAM
 		
-		$(".QvFrame").filter(".Document_CH42").on('mouseout', function (event) {
-				event.stopPropagation();
-				$(".QvFrame").filter(".Document_TX_HOVER").hide();
-			});		
-
-		$(".QvFrame").filter(".Document_CH42").on('mouseover', function (event) {
-				event.stopPropagation();
-				$(".QvFrame").filter(".Document_TX_HOVER").css("top", event.pageY).css("left", selfL+selfW).show();
-				//$(".QvFrame").filter(".Document_TX_HOVER").css("top", event.pageY).show();
-				console.log('x: ' +  event.pageX+ ' y: ' +  event.pageY+ ' '+$(this).css("left") );
-				
-			});		
-		
-		var grName = "CH31";
-		var grNameDet = "CH42";
-		//var grMainY=$(".QvFrame").filter(".Document_"+grName).css("top")+$(".QvFrame").filter(".Document_"+grName).css("height");
-		//console.log("mainY= "+grMainY);
-		//var grMainY=$(".QvFrame").filter(":visible").filter(".Document_"+grName);
+		//------------------------------------------------------------------- objects under grid move
 		var grMain=$(".QvFrame").filter(":visible").filter(".Document_"+grName+", .Document_"+grNameDet);
-		//var grDet =$(".QvFrame").filter(":visible").filter(".Document_"+grNameDet);
-		//grMain.each(function(){	console.log("nm= "+$(this).attr("class").indexOf("Document_"+grName));	});
-		
-		//filter(function() {
-		//  return ($(this).attr("class").indexOf("Document_"+grName ) || $(this).attr("class").indexOf("Document_"+grNameDet))
-		//});
 		var grMainY = grMain.position().top+grMain.outerHeight();
-		//console.log("pos= "+grMain.position().top+ " hg="+ grMain.outerHeight());
 		
 		// shift buttons up to grid 
 		if ((elementsUnderGrid==undefined) && (grMain.attr("class").indexOf("Document_"+grName)>=0)) {
@@ -78,13 +48,11 @@ Qva.AddDocumentExtension('centerAlign', function() {
 				return grMainY< $(this).position().top;
 			});
 		}	
-		console.log("*");
 		if ((elementsUnderGridDet==undefined)  && (grMain.attr("class").indexOf("Document_"+grNameDet)>=0)) {
 			elementsUnderGridDet=$(".QvFrame").filter(function () {
 				return grMainY< $(this).position().top;
 			});
 		}	
-		console.log("**");
 		if (elementsUnderGridDet!=undefined) {
 			elementsUnderGridDet.css("top", grMainY+10);
 		}	
@@ -98,10 +66,11 @@ Qva.AddDocumentExtension('centerAlign', function() {
 		}	
 		
 		elementsBeyondGrid.each(function(){
-			$(this).css("height", grMainY-$(this).position().top+100).children().filter(".QvContent").css("height", grMainY-$(this).position().top+100);
+			$(this).css("height", grMainY-$(this).position().top+60).children().filter(".QvContent").css("height", grMainY-$(this).position().top+60);
 			console.log("grMainY="+grMainY+" topNew= "+ $(this).position().top + " hg="+$(this).outerHeight()+" css = "+$(this).css("height"));
 			console.log($(this).attr("class"));
 		})
+		//------------------------------------------------------------------- EPAM	
 		
 	}
 	_this.Document.SetOnUpdateComplete(centerIt);
